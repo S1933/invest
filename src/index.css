@@ -1,0 +1,228 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 1rem;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.app-header h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.app-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 0.25rem;
+  background: #1e293b;
+  border-radius: 8px;
+  padding: 0.25rem;
+}
+
+.filter-bar button {
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+
+.filter-bar button.active {
+  background: #3b82f6;
+  color: #fff;
+}
+
+.filter-bar button:hover:not(.active) {
+  color: #e2e8f0;
+}
+
+.refresh-btn {
+  background: #1e293b;
+  border: none;
+  color: #94a3b8;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  color: #e2e8f0;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.card-label {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.card-currency {
+  font-size: 0.75rem;
+  color: #64748b;
+  background: #334155;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+}
+
+.card-change {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+}
+
+.card-change[data-positive='true'] {
+  color: #22c55e;
+}
+
+.card-change[data-positive='false'] {
+  color: #ef4444;
+}
+
+.card-ath {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-top: -0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-ath[data-positive='true'] {
+  color: #22c55e;
+}
+
+.card-ath[data-positive='false'] {
+  color: #ef4444;
+}
+
+.card-ath-live {
+  font-weight: 600;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  display: inline-block;
+  width: fit-content;
+}
+
+.card-ath-pending {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #64748b;
+  margin-top: -0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.card-ath-warn {
+  font-size: 0.7rem;
+  color: #f59e0b;
+  margin-top: -0.4rem;
+  margin-bottom: 0.55rem;
+}
+
+.card-status {
+  padding: 2rem 0;
+  text-align: center;
+  color: #64748b;
+}
+
+.card-status.error {
+  color: #ef4444;
+}
+
+.chart-container {
+  margin: 0 -0.5rem;
+}
+
+/* Recharts renders the SVG with tabindex=0 so the SVG keeps the browser's
+   default blue focus outline after a click/tap. Strip the outline here. */
+.chart-container svg,
+.chart-container svg * {
+  outline: none;
+}
+
+.card,
+.chart-container,
+.refresh-btn {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card-warning {
+  font-size: 0.7rem;
+  color: #f59e0b;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.6rem;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: 4px;
+}
+
+.card-meta {
+  font-size: 0.7rem;
+  color: #64748b;
+  margin-top: 0.5rem;
+  text-align: right;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
