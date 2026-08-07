@@ -17,7 +17,7 @@ avec données issues de **Yahoo Finance**.
 |-----------|--------------------------|-----------|--------|
 | `gold`    | Or                       | `GC=F`    | USD    |
 | `msci`    | MSCI World (via IWDA.L)  | `IWDA.L`  | USD    |
-| `msci-acwi` | MSCI ACWI (via ACWI)   | `ACWI`    | USD    |
+| `msci-em` | MSCI EM (via EEM)     | `EEM`     | USD    |
 | `stoxx`   | Stoxx 600                | `^STOXX`  | EUR    |
 | `bitcoin` | Bitcoin                  | `BTC-USD` | USD    |
 | `ovhcloud`| OVHcloud                 | `OVH.PA`  | EUR    |
