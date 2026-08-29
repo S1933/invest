@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Range } from './types'
 import { useAssetData } from './hooks/useAssetData'
 import { FilterBar } from './components/FilterBar'
@@ -7,6 +7,13 @@ import { AssetCard } from './components/AssetCard'
 export default function App() {
   const [range, setRange] = useState<Range>('6mo')
   const { assets, loading, athLoading, refresh } = useAssetData(range)
+
+  // Auto-fetch the selected range on mount and whenever it changes. Without
+  // this, switching tabs shows "Aucune donnée" until the user clicks refresh.
+  useEffect(() => {
+    refresh()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [range])
 
   const refreshLabel = loading
     ? 'Chargement...'
