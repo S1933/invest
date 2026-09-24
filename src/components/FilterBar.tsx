@@ -5,7 +5,7 @@ type Props = {
   onChange: (r: Range) => void
 }
 
-const RANGES: Range[] = ['6mo', '1y', '3y', '5y']
+const RANGES: Range[] = ['1mo', '6mo', '1y', '3y', '5y']
 
 export function FilterBar({ range, onChange }: Props) {
   return (

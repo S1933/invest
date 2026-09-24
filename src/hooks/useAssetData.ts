@@ -1,8 +1,8 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import type { Range, DataPoint } from '../types'
 import { assets } from '../assets'
-import { fetchYahoo, fetchAth, type Ath } from '../api'
-import { loadCache, saveCache, type CacheShape, type CachedAth } from '../storage'
+import { fetchYahoo } from '../api'
+import { loadCache, saveCache, type CacheShape } from '../storage'
 
 export type AssetData = {
   id: string
@@ -11,25 +11,22 @@ export type AssetData = {
   data: DataPoint[]
   error: string | null
   fetchedAt: number | null
-  ath: CachedAth | null
-  athError: string | null
 }
 
 export type UseAssetDataResult = {
   assets: AssetData[]
   loading: boolean
-  athLoading: boolean
   refresh: () => Promise<void>
 }
 
 const yahooDelay = 600 // ms between Yahoo calls to avoid 429
+const ttlMs = 60_000 // auto-refresh when the cached range data is older than this
+const checkMs = 15_000 // how often the staleness check runs
 
 export function useAssetData(range: Range): UseAssetDataResult {
   const [cache, setCache] = useState<CacheShape>(() => loadCache())
   const [loading, setLoading] = useState(false)
-  const [athLoading, setAthLoading] = useState(false)
   const [errors, setErrors] = useState<Record<string, string>>({})
-  const [athErrors, setAthErrors] = useState<Record<string, string>>({})
 
   // Fetch the displayed range for every asset. Returns the new cache slice.
   const fetchRange = useCallback(async (current: CacheShape) => {
@@ -58,52 +55,47 @@ export function useAssetData(range: Range): UseAssetDataResult {
     return { byAsset: newByAsset } as Pick<CacheShape, 'byAsset'>
   }, [range])
 
-  // Fetch ATH (range=max) only for assets that don't have one cached yet.
-  // ATH only goes up, so cached values stay valid for a long time.
-  const fetchMissingAth = useCallback(async (current: CacheShape) => {
-    const missing = assets.filter(a => !current.ath[a.id])
-    if (missing.length === 0) return { ath: current.ath } as Pick<CacheShape, 'ath'>
-
-    const results = await Promise.allSettled(
-      missing.map((asset, i) => async () => {
-        // offset stagger to avoid colliding with the range fetches above
-        if (i > 0) await new Promise(r => setTimeout(r, yahooDelay * (i + 1)))
-        return fetchAth(asset.symbol)
-      }).map(fn => fn())
-    )
-
-    const fetchedAt = Date.now()
-    const newAth: Record<string, CachedAth> = { ...current.ath }
-    const newAthErrors: Record<string, string> = {}
-
-    results.forEach((r, i) => {
-      const asset = missing[i]
-      if (r.status === 'fulfilled') {
-        newAth[asset.id] = { ...r.value, fetchedAt }
-      } else {
-        newAthErrors[asset.id] = String(r.reason)
-      }
-    })
-
-    setAthErrors(newAthErrors)
-    return { ath: newAth } as Pick<CacheShape, 'ath'>
-  }, [])
+  // Fetch ATH is removed: the card now shows the selected-period variation
+  // instead of the all-time high, so we no longer need the range=max request.
 
   const refresh = useCallback(async () => {
     setLoading(true)
-    setAthLoading(true)
     try {
       const rangeSlice = await fetchRange(cache)
-      const newCache: CacheShape = { version: 2, byAsset: rangeSlice.byAsset, ath: cache.ath }
-      const athSlice = await fetchMissingAth(newCache)
-      const finalCache: CacheShape = { version: 2, byAsset: newCache.byAsset, ath: athSlice.ath }
-      saveCache(finalCache)
-      setCache(finalCache)
+      const newCache: CacheShape = { version: 3, byAsset: rangeSlice.byAsset }
+      saveCache(newCache)
+      setCache(newCache)
     } finally {
       setLoading(false)
-      setAthLoading(false)
     }
-  }, [cache, fetchRange, fetchMissingAth])
+  }, [cache, fetchRange])
+
+  // Keep the latest cache/refresh reachable from the staleness timer without
+  // resetting the interval on every state change (refresh is re-created each
+  // time the cache updates).
+  const cacheRef = useRef(cache)
+  useEffect(() => { cacheRef.current = cache }, [cache])
+  const refreshRef = useRef(refresh)
+  useEffect(() => { refreshRef.current = refresh }, [refresh])
+
+  // Auto-refresh: while the tab is open, refetch the selected range when the
+  // cached data gets older than ttlMs. All assets share one fetchedAt per
+  // refresh, so checking the first asset is enough. lastAttemptRef caps retry
+  // rate so a Yahoo failure doesn't hammer the proxy every checkMs.
+  const lastAttemptRef = useRef(0)
+  useEffect(() => {
+    const id = setInterval(() => {
+      const now = Date.now()
+      if (now - lastAttemptRef.current < ttlMs) return
+      const entry = cacheRef.current.byAsset?.[assets[0]?.id]?.[range]
+      const stale = !entry || now - entry.fetchedAt > ttlMs
+      if (stale) {
+        lastAttemptRef.current = now
+        refreshRef.current()
+      }
+    }, checkMs)
+    return () => clearInterval(id)
+  }, [range])
 
   const displayed = useMemo<AssetData[]>(() => {
     return assets.map(a => {
@@ -115,13 +107,9 @@ export function useAssetData(range: Range): UseAssetDataResult {
         data: cached?.data ?? [],
         fetchedAt: cached?.fetchedAt ?? null,
         error: errors[a.id] ?? null,
-        ath: cache.ath[a.id] ?? null,
-        athError: athErrors[a.id] ?? null,
       }
     })
-  }, [cache, range, errors, athErrors])
+  }, [cache, range, errors])
 
-  return { assets: displayed, loading, athLoading, refresh }
+  return { assets: displayed, loading, refresh }
 }
-
-export type { Ath }

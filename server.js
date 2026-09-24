@@ -101,10 +101,17 @@ const server = http.createServer((req, res) => {
   const pathname = url.pathname
   const query = url.searchParams.toString()
 
-  // CORS for all responses
-  res.setHeader('Access-Control-Allow-Origin', '*')
-
+  // Same-origin CORS only; the wildcard let any site read the Yahoo proxy.
+  res.setHeader('Access-Control-Allow-Origin', 'https://invest.gastronomie-domicile.fr')
   if (pathname.startsWith('/api/yahoo')) {
+    // Audit fix IN-01: only the chart endpoint is allowed — anything else used
+    // to forward verbatim to Yahoo (open relay, scraping pivot).
+    const chartOk = /^\/api\/yahoo\/v8\/finance\/chart\/[^/?#]+$/.test(pathname)
+    if (!chartOk) {
+      res.writeHead(404)
+      res.end(JSON.stringify({ error: 'Not Found' }))
+      return
+    }
     const apiPath = pathname.replace('/api/yahoo', '')
     proxyYahoo(apiPath, query, res)
   } else {
@@ -112,8 +119,8 @@ const server = http.createServer((req, res) => {
   }
 })
 
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Invest server running on http://0.0.0.0:${PORT}`)
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`Invest server running on http://127.0.0.1:${PORT}`)
   console.log(`  Static: ${DIST}`)
   console.log(`  Proxy:  /api/yahoo/* → query1.finance.yahoo.com`)
 })

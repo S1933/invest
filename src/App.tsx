@@ -5,8 +5,8 @@ import { FilterBar } from './components/FilterBar'
 import { AssetCard } from './components/AssetCard'
 
 export default function App() {
-  const [range, setRange] = useState<Range>('6mo')
-  const { assets, loading, athLoading, refresh } = useAssetData(range)
+  const [range, setRange] = useState<Range>('1y')
+  const { assets, loading, refresh } = useAssetData(range)
 
   // Auto-fetch the selected range on mount and whenever it changes. Without
   // this, switching tabs shows "Aucune donnée" until the user clicks refresh.
@@ -15,11 +15,7 @@ export default function App() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [range])
 
-  const refreshLabel = loading
-    ? 'Chargement...'
-    : athLoading
-      ? 'ATH en cours...'
-      : 'Actualiser'
+  const refreshLabel = loading ? 'Chargement...' : 'Actualiser'
 
   return (
     <div className="app">
@@ -30,10 +26,10 @@ export default function App() {
           <button
             className="refresh-btn"
             onClick={refresh}
-            disabled={loading || athLoading}
+            disabled={loading}
             title={refreshLabel}
           >
-            {loading || athLoading ? '…' : '⟳'}
+            {loading ? '…' : '⟳'}
           </button>
         </div>
       </header>

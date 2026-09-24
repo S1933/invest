@@ -7,9 +7,9 @@ avec données issues de **Yahoo Finance**.
 
 - Suivi multi-actifs avec prix temps réel via Yahoo Finance (`/api/yahoo`)
 - Graphiques historiques (recharts) sur différentes périodes
-- Calcul des plus hauts historiques (ATH)
+- Variation (en %) sur la période sélectionnée par actif
 - Filtres par classe d'actifs
-- Cache local (`localStorage`) relié par période + ATH
+- Cache local (`localStorage`) relié par période
 
 ## Actifs suivis
 
@@ -19,7 +19,7 @@ avec données issues de **Yahoo Finance**.
 | `msci`    | MSCI World (via IWDA.L)  | `IWDA.L`  | USD    |
 | `msci-em` | MSCI EM (via EEM)     | `EEM`     | USD    |
 | `stoxx`   | Stoxx 600                | `^STOXX`  | EUR    |
-| `bitcoin` | Bitcoin                  | `BTC-USD` | USD    |
+| `bitcoin-etp`| Bitcoin ETP CoinShares (via BITC.SW) | `BITC.SW` | CHF |
 | `ovhcloud`| OVHcloud                 | `OVH.PA`  | EUR    |
 
 La liste des actifs est définie dans `src/assets.ts`.

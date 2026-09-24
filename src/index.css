@@ -137,47 +137,6 @@ body {
   color: #ef4444;
 }
 
-.card-ath {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #94a3b8;
-  margin-top: -0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.card-ath[data-positive='true'] {
-  color: #22c55e;
-}
-
-.card-ath[data-positive='false'] {
-  color: #ef4444;
-}
-
-.card-ath-live {
-  font-weight: 600;
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.1);
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  display: inline-block;
-  width: fit-content;
-}
-
-.card-ath-pending {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
-  margin-top: -0.5rem;
-  margin-bottom: 0.75rem;
-}
-
-.card-ath-warn {
-  font-size: 0.7rem;
-  color: #f59e0b;
-  margin-top: -0.4rem;
-  margin-bottom: 0.55rem;
-}
-
 .card-status {
   padding: 2rem 0;
   text-align: center;

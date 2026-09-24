@@ -1,4 +1,4 @@
-export type Range = '6mo' | '1y' | '3y' | '5y'
+export type Range = '1mo' | '6mo' | '1y' | '3y' | '5y'
 
 export type DataPoint = {
   date: string
