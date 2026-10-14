@@ -106,6 +106,11 @@ const server = http.createServer((req, res) => {
   if (pathname.startsWith('/api/yahoo')) {
     // Audit fix IN-01: only the chart endpoint is allowed — anything else used
     // to forward verbatim to Yahoo (open relay, scraping pivot).
+    if (req.method !== 'GET') {
+      res.writeHead(405)
+      res.end(JSON.stringify({ error: 'Method Not Allowed' }))
+      return
+    }
     const chartOk = /^\/api\/yahoo\/v8\/finance\/chart\/[^/?#]+$/.test(pathname)
     if (!chartOk) {
       res.writeHead(404)

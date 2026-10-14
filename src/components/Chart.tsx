@@ -6,7 +6,7 @@ type Props = {
   color?: string
 }
 
-export function Chart({ data, color = '#3b82f6' }: Props) {
+export function Chart({ data, color = '#57ff8a' }: Props) {
   if (data.length === 0) return null
 
   const firstPrice = data[0].price
@@ -27,7 +27,7 @@ export function Chart({ data, color = '#3b82f6' }: Props) {
             dataKey="i"
             type="number"
             domain={[0, chartData.length - 1]}
-            tick={{ fontSize: 10 }}
+            tick={{ fontSize: 10, fill: '#77836f' }}
             tickFormatter={(i: number) => {
               const date = dates[Math.round(i)]
               return date ? fmtDate(date) : ''
@@ -35,7 +35,7 @@ export function Chart({ data, color = '#3b82f6' }: Props) {
             minTickGap={40}
             allowDecimals={false}
           />
-          <YAxis domain={['auto', 'auto']} tick={{ fontSize: 10 }} width={55} tickFormatter={(v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(0)}%`} />
+          <YAxis domain={['auto', 'auto']} tick={{ fontSize: 10, fill: '#77836f' }} width={55} tickFormatter={(v: number) => `${v >= 0 ? '+' : ''}${v.toFixed(0)}%`} />
           <Line type="monotone" dataKey="change" stroke={color} dot={false} activeDot={false} strokeWidth={2} isAnimationActive={false} />
         </LineChart>
       </ResponsiveContainer>

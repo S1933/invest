@@ -41,7 +41,7 @@ export function AssetCard({ label, currency, data, error, loading, fetchedAt }: 
           <div className="card-change" data-positive={change !== null && change >= 0}>
             {change !== null ? `${change >= 0 ? '+' : ''}${change.toFixed(2)}%` : '—'}
           </div>
-          <Chart data={data} />
+          <Chart data={data} color={change !== null && change >= 0 ? '#57ff8a' : '#ff5f56'} />
           {error && <div className="card-warning">⚠ {error}</div>}
           {fetchedAt && (
             <div className="card-meta">

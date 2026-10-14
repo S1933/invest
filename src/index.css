@@ -6,18 +6,63 @@
   padding: 0;
 }
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #0f172a;
-  color: #e2e8f0;
-  padding: 1rem;
+:root {
+  color-scheme: dark;
+  --bg: #0a0e0a;
+  --panel: #0e140d;
+  --ink: #c4cfc1;
+  --ink-soft: #a8b4a4;
+  --muted: #77836f;
+  --line: #1d2a1c;
+  --line-soft: #141e13;
+  --accent: #57ff8a;
+  --accent-dim: #2ea85c;
+  --amber: #ffb000;
+  --danger: #ff5f56;
+  --focus: rgba(87, 255, 138, 0.55);
+  --selection: #57ff8a;
+  --selection-ink: #06110a;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 }
+
+body {
+  font-family: var(--font-mono);
+  background: var(--bg);
+  color: var(--ink);
+  padding: 1rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--selection); color: var(--selection-ink); }
+
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+/* Quiet scanline patina, same as the other terminal apps. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(87, 255, 138, 0.015) 0 1px,
+    transparent 1px 3px
+  );
+}
+
+* { scrollbar-width: thin; scrollbar-color: var(--line) transparent; }
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-thumb { background: var(--line); border: 3px solid transparent; background-clip: content-box; }
+*::-webkit-scrollbar-thumb:hover { background: var(--muted); background-clip: content-box; }
+*::-webkit-scrollbar-track { background: transparent; }
 
 .app {
   max-width: 1200px;
   margin: 0 auto;
 }
 
+/* --- Header: bracketed brand, like the other terminal apps --- */
 .app-header {
   display: flex;
   align-items: center;
@@ -28,62 +73,78 @@ body {
 }
 
 .app-header h1 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.15rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+.app-header h1::before {
+  content: "[";
+  color: var(--accent);
+  margin-right: 2px;
+}
+.app-header h1::after {
+  content: "]";
+  color: var(--accent);
+  margin-left: 2px;
 }
 
 .app-controls {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.6rem;
 }
 
+/* --- Range segmented control --- */
 .filter-bar {
-  display: flex;
-  gap: 0.25rem;
-  background: #1e293b;
-  border-radius: 8px;
-  padding: 0.25rem;
+  display: inline-flex;
+  border: 1px solid var(--line);
+  background: var(--panel);
 }
 
 .filter-bar button {
   border: none;
+  border-right: 1px solid var(--line);
   background: transparent;
-  color: #94a3b8;
-  padding: 0.4rem 0.9rem;
-  border-radius: 6px;
+  color: var(--muted);
+  padding: 0.45rem 0.95rem;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-family: inherit;
+  font-size: 0.8rem;
   font-weight: 500;
-  transition: all 0.15s;
+  transition: background 0.12s ease, color 0.12s ease;
 }
+.filter-bar button:last-child { border-right: none; }
 
 .filter-bar button.active {
-  background: #3b82f6;
-  color: #fff;
+  background: var(--accent);
+  color: var(--selection-ink);
+  font-weight: 700;
 }
 
 .filter-bar button:hover:not(.active) {
-  color: #e2e8f0;
+  background: var(--line-soft);
+  color: var(--ink);
 }
 
+/* --- Refresh: ghost command button --- */
 .refresh-btn {
-  background: #1e293b;
-  border: none;
-  color: #94a3b8;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  color: var(--muted);
   width: 34px;
   height: 34px;
-  border-radius: 8px;
   cursor: pointer;
   font-size: 1.1rem;
+  font-family: inherit;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.15s;
+  transition: color 0.12s ease, border-color 0.12s ease;
 }
 
 .refresh-btn:hover:not(:disabled) {
-  color: #e2e8f0;
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .refresh-btn:disabled {
@@ -97,9 +158,10 @@ body {
   gap: 1rem;
 }
 
+/* --- Cards: flat panels, hairline border, no radius --- */
 .card {
-  background: #1e293b;
-  border-radius: 12px;
+  background: var(--panel);
+  border: 1px solid var(--line);
   padding: 1rem;
 }
 
@@ -111,51 +173,62 @@ body {
 }
 
 .card-label {
-  font-weight: 600;
+  font-weight: 500;
   font-size: 0.95rem;
+  color: var(--ink);
 }
 
 .card-currency {
-  font-size: 0.75rem;
-  color: #64748b;
-  background: #334155;
+  font-size: 0.72rem;
+  color: var(--accent);
+  background: var(--bg);
+  border: 1px solid var(--accent-dim);
   padding: 0.15rem 0.5rem;
-  border-radius: 4px;
 }
 
 .card-change {
   font-size: 1.4rem;
   font-weight: 700;
   margin-bottom: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
 }
 
 .card-change[data-positive='true'] {
-  color: #22c55e;
+  color: var(--accent);
 }
-
 .card-change[data-positive='false'] {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .card-status {
   padding: 2rem 0;
   text-align: center;
-  color: #64748b;
+  color: var(--muted);
 }
 
 .card-status.error {
-  color: #ef4444;
+  color: var(--danger);
 }
 
 .chart-container {
   margin: 0 -0.5rem;
 }
 
-/* Recharts renders the SVG with tabindex=0 so the SVG keeps the browser's
-   default blue focus outline after a click/tap. Strip the outline here. */
+/* Recharts — strip the default focus outline and re-theme axis + grid. */
 .chart-container svg,
 .chart-container svg * {
   outline: none;
+}
+.chart-container .recharts-cartesian-grid line {
+  stroke: var(--line-soft);
+}
+.chart-container .recharts-text {
+  fill: var(--muted);
+  font-family: var(--font-mono);
+}
+.chart-container .recharts-cartesian-axis-line {
+  stroke: var(--line);
 }
 
 .card,
@@ -166,18 +239,19 @@ body {
 
 .card-warning {
   font-size: 0.7rem;
-  color: #f59e0b;
+  color: var(--amber);
   margin-top: 0.5rem;
   padding: 0.4rem 0.6rem;
-  background: rgba(245, 158, 11, 0.1);
-  border-radius: 4px;
+  background: rgb(255 176 0 / 0.08);
+  border: 1px solid rgb(255 176 0 / 0.25);
 }
 
 .card-meta {
   font-size: 0.7rem;
-  color: #64748b;
+  color: var(--muted);
   margin-top: 0.5rem;
   text-align: right;
+  font-variant-numeric: tabular-nums;
 }
 
 @media (max-width: 640px) {
