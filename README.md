@@ -8,7 +8,7 @@ avec données issues de **Yahoo Finance**.
 - Suivi multi-actifs avec prix temps réel via Yahoo Finance (`/api/yahoo`)
 - Graphiques historiques (recharts) sur différentes périodes
 - Variation (en %) sur la période sélectionnée par actif
-- Variation au plus haut de la période et écart depuis ce plus haut (par actif)
+- Date du plus haut de la période et variation depuis ce plus haut (par actif)
 - Filtres par classe d'actifs
 - Cache local (`localStorage`) relié par période
 

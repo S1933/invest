@@ -215,12 +215,8 @@ body::after {
 
 .card-high-label { color: var(--muted); }
 
-.card-high-peak {
-  color: var(--accent);
-  font-weight: 700;
-}
-
-.card-high-gap { color: var(--danger); }
+.card-high-gap[data-negative='true'] { color: var(--danger); }
+.card-high-gap[data-negative='false'] { color: var(--accent); }
 
 .card-status {
   padding: 2rem 0;

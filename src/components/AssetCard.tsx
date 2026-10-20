@@ -22,18 +22,14 @@ export function AssetCard({ label, currency, data, error, loading, fetchedAt }: 
     ? ((lastPrice - firstPrice) / firstPrice * 100)
     : null
 
-  // Highest point reached during the selected range, and the two variations
-  // that go with it: the level the high itself reached over the period, and
-  // how far the current price sits below it.
+  // Highest point of the selected range: its date, and how far the current
+  // price sits below it (the variation since that high).
   const high = hasData ? data.reduce((best, point) => (point.price > best.price ? point : best), data[0]) : null
-  const highChange = high !== null && firstPrice !== null
-    ? ((high.price - firstPrice) / firstPrice * 100)
-    : null
   const sinceHigh = high !== null && lastPrice !== null
     ? ((lastPrice - high.price) / high.price * 100)
     : null
   const highDate = high !== null
-    ? new Date(high.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
+    ? new Date(high.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
     : null
 
   return (
@@ -59,13 +55,12 @@ export function AssetCard({ label, currency, data, error, loading, fetchedAt }: 
           <div className="card-change" data-positive={change !== null && change >= 0}>
             {change !== null ? formatPercent(change) : '—'}
           </div>
-          {highChange !== null && (
+          {sinceHigh !== null && (
             <div className="card-high">
               <span className="card-high-label">Plus haut {highDate}</span>
-              <span className="card-high-peak">{formatPercent(highChange)}</span>
-              {sinceHigh !== null && (
-                <span className="card-high-gap">depuis {formatPercent(sinceHigh)}</span>
-              )}
+              <span className="card-high-gap" data-negative={sinceHigh < 0}>
+                {formatPercent(sinceHigh)} depuis
+              </span>
             </div>
           )}
           <Chart data={data} color={change !== null && change >= 0 ? '#57ff8a' : '#ff5f56'} />
