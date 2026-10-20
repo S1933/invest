@@ -201,6 +201,27 @@ body::after {
   color: var(--danger);
 }
 
+/* Variation at the highest point of the selected period, and the gap from
+   that high back down to the current price. */
+.card-high {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: -0.35rem 0 0.75rem;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.card-high-label { color: var(--muted); }
+
+.card-high-peak {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.card-high-gap { color: var(--danger); }
+
 .card-status {
   padding: 2rem 0;
   text-align: center;

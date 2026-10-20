@@ -10,12 +10,30 @@ type Props = {
   fetchedAt: number | null
 }
 
+function formatPercent(value: number): string {
+  return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`
+}
+
 export function AssetCard({ label, currency, data, error, loading, fetchedAt }: Props) {
   const hasData = data.length > 0
   const lastPrice = hasData ? data[data.length - 1].price : null
   const firstPrice = hasData ? data[0].price : null
   const change = lastPrice !== null && firstPrice !== null
     ? ((lastPrice - firstPrice) / firstPrice * 100)
+    : null
+
+  // Highest point reached during the selected range, and the two variations
+  // that go with it: the level the high itself reached over the period, and
+  // how far the current price sits below it.
+  const high = hasData ? data.reduce((best, point) => (point.price > best.price ? point : best), data[0]) : null
+  const highChange = high !== null && firstPrice !== null
+    ? ((high.price - firstPrice) / firstPrice * 100)
+    : null
+  const sinceHigh = high !== null && lastPrice !== null
+    ? ((lastPrice - high.price) / high.price * 100)
+    : null
+  const highDate = high !== null
+    ? new Date(high.date).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit' })
     : null
 
   return (
@@ -39,8 +57,17 @@ export function AssetCard({ label, currency, data, error, loading, fetchedAt }: 
       {hasData && (
         <>
           <div className="card-change" data-positive={change !== null && change >= 0}>
-            {change !== null ? `${change >= 0 ? '+' : ''}${change.toFixed(2)}%` : '—'}
+            {change !== null ? formatPercent(change) : '—'}
           </div>
+          {highChange !== null && (
+            <div className="card-high">
+              <span className="card-high-label">Plus haut {highDate}</span>
+              <span className="card-high-peak">{formatPercent(highChange)}</span>
+              {sinceHigh !== null && (
+                <span className="card-high-gap">depuis {formatPercent(sinceHigh)}</span>
+              )}
+            </div>
+          )}
           <Chart data={data} color={change !== null && change >= 0 ? '#57ff8a' : '#ff5f56'} />
           {error && <div className="card-warning">⚠ {error}</div>}
           {fetchedAt && (
